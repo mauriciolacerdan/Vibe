@@ -16,5 +16,6 @@ export type AppStackParamList = {
 export type AppTabParamList = {
   HomeTab: NavigatorScreenParams<AppStackParamList>;
   Search: undefined;
+  ChatRoom: undefined;
   Profile: undefined;
 };

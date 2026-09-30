@@ -8,6 +8,7 @@ import Profile from '../pages/Profile/index';
 import Search from '../pages/Search/index';
 import NewPost from '../pages/NewPost/index';
 import PostsUser from '../pages/PostsUser/index';
+import ChatRoom from '../pages/ChatRoom(HeyGrupos)';
 import type { AppStackParamList, AppTabParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
@@ -57,6 +58,7 @@ export default function AppRoutes() {
           borderTopWidth: 0,
         },
       }}
+      initialRouteName="HomeTab"
     >
       <Tab.Screen
         name="HomeTab"
@@ -73,6 +75,15 @@ export default function AppRoutes() {
         options={{
           tabBarIcon: ({ color, size }) => {
             return <Feather name="search" color={color} size={size} />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={{
+          tabBarIcon: ({ color, size }) => {
+            return <Feather name="message-circle" color={color} size={size} />;
           },
         }}
       />

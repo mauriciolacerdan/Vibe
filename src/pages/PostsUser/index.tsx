@@ -40,7 +40,6 @@ export default function PostsUser() {
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
-      console.log('USER ID DA ROTA:', route.params.userId); // adiconado para testes
       getDocs(
         query(
           collection(db, 'posts'),

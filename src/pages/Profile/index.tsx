@@ -36,11 +36,7 @@ import {
 } from './styles';
 
 import Feather from '@react-native-vector-icons/feather';
-import {
-  db,
-  isStorageObjectNotFound,
-  storage,
-} from '../../services/firebase';
+import { db, isStorageObjectNotFound, storage } from '../../services/firebase';
 
 export default function Profile() {
   const { signOut, user, setUser, storageUser } = useAuth();

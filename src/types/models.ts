@@ -20,3 +20,11 @@ export type UserSearchResult = {
   id: string;
   nome: string;
 };
+
+export type ModalNewRoomProps = {
+  setVisible: () => void;
+};
+
+export type FabButtonProps = {
+  setVisible: () => void;
+};

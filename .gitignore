@@ -82,3 +82,25 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Firebase / segredos extras
+android/app/debug.keystore.bak
+*.jks
+*.p12
+*.pem
+serviceAccountKey*.json
+
+# Expo/Metro/TS (caso venha a usar)
+*.tsbuildinfo
+.expo/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Logs
+*.log
+
+# Ruby local
+.bundle/

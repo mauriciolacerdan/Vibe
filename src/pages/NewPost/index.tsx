@@ -6,11 +6,7 @@ import { getDownloadURL, ref } from '@react-native-firebase/storage';
 import { useAuth } from '../../contexts/auth';
 import { Container, Input, Button, ButtonText } from './styles';
 import { Alert } from 'react-native';
-import {
-  db,
-  isStorageObjectNotFound,
-  storage,
-} from '../../services/firebase';
+import { db, isStorageObjectNotFound, storage } from '../../services/firebase';
 import type { AppStackParamList } from '../../types/navigation';
 
 export default function NewPost() {
