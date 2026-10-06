@@ -12,7 +12,7 @@ export default function Routes() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size={50} color="#E52246" />
+        <ActivityIndicator size={50} color="#111827" />
       </View>
     );
   }
@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#36393f',
+    backgroundColor: '#f8fafc',
   },
 });

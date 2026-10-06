@@ -7,6 +7,7 @@ export type AuthStackParamList = {
 export type AppStackParamList = {
   Home: undefined;
   NewPost: undefined;
+  Search: undefined;
   PostsUser: {
     title: string;
     userId: string;

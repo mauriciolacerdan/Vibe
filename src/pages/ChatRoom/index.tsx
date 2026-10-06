@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Modal, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { Container, HeaderRoom, HeaderRoomLeft, Title } from './styles';
-import FabButton from '../../components/FabButton(HeyGrupos)';
-import ModalNewRoom from '../../components/ModalNewRoom(HeyGrupos)';
+import FabButton from '../../components/FabButton';
+import ModalNewRoom from '../../components/ModalNewRoom';
 
 export default function ChatRoom() {
   const [modalVisible, setModalVisible] = useState(false);

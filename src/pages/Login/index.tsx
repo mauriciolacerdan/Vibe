@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { Alert, ActivityIndicator } from 'react-native';
 import {
   Container,
-  Title,
+  Brand,
+  Subtitle,
   Input,
   Button,
   ButtonText,
   SignUpButton,
   SignUpText,
+  Form,
 } from './styles';
 import { useAuth } from '../../contexts/auth';
 
 import * as Animatable from 'react-native-animatable';
-const TitleAnimated = Animatable.createAnimatableComponent(Title);
+const BrandAnimated = Animatable.createAnimatableComponent(Brand);
 
 export default function Login() {
-  const [login, setLogin] = useState(true);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [login, setLogin] = React.useState(true);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const { signUp, signIn, loadingAuth } = useAuth();
 
@@ -47,80 +49,56 @@ export default function Login() {
     setPassword('');
   }
 
-  if (login) {
-    return (
-      <Container>
-        <TitleAnimated animation="flipInY">
-          Dev<Text style={styles.post}>Post</Text>
-        </TitleAnimated>
+  return (
+    <Container>
+      <BrandAnimated animation="fadeInDown" duration={700}>
+        <Brand>Vibe</Brand>
+      </BrandAnimated>
+
+      <Subtitle>
+        {login
+          ? 'Conecte-se com pessoas e ideias.'
+          : 'Crie sua conta e comece a compartilhar.'}
+      </Subtitle>
+
+      <Form>
+        {!login && (
+          <Input
+            placeholder="Seu nome"
+            value={name}
+            onChangeText={text => setName(text)}
+          />
+        )}
 
         <Input
           placeholder="seuemail@teste.com"
           value={email}
           onChangeText={text => setEmail(text)}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
         <Input
           placeholder="******"
           value={password}
           onChangeText={text => setPassword(text)}
           secureTextEntry={true}
+          autoCapitalize="none"
         />
 
-        <Button onPress={handleSignIn}>
+        <Button onPress={login ? handleSignIn : handleSignUp}>
           {loadingAuth ? (
             <ActivityIndicator size={20} color="#fff" />
           ) : (
-            <ButtonText>Acessar</ButtonText>
+            <ButtonText>{login ? 'Acessar' : 'Cadastrar'}</ButtonText>
           )}
         </Button>
 
         <SignUpButton onPress={toggleLogin}>
-          <SignUpText>Criar uma conta</SignUpText>
+          <SignUpText>
+            {login ? 'Criar uma conta' : 'Já possuo uma conta'}
+          </SignUpText>
         </SignUpButton>
-      </Container>
-    );
-  }
-
-  return (
-    <Container>
-      <TitleAnimated animation="flipInY">
-        Dev<Text style={styles.post}>Post</Text>
-      </TitleAnimated>
-
-      <Input
-        placeholder="Seu nome"
-        value={name}
-        onChangeText={text => setName(text)}
-      />
-      <Input
-        placeholder="seuemail@teste.com"
-        value={email}
-        onChangeText={text => setEmail(text)}
-      />
-      <Input
-        placeholder="******"
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry={true}
-      />
-
-      <Button onPress={handleSignUp}>
-        {loadingAuth ? (
-          <ActivityIndicator size={20} color="#fff" />
-        ) : (
-          <ButtonText>Cadastrar</ButtonText>
-        )}
-      </Button>
-
-      <SignUpButton onPress={toggleLogin}>
-        <SignUpText>Ja possuo uma conta</SignUpText>
-      </SignUpButton>
+      </Form>
     </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  post: {
-    color: '#E52246',
-  },
-});

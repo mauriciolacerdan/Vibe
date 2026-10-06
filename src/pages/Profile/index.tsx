@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Modal, Platform } from 'react-native';
-
 import {
   launchImageLibrary,
   type ImageLibraryOptions,
@@ -18,25 +17,34 @@ import {
   putFile,
   ref as storageRef,
 } from '@react-native-firebase/storage';
-
+import Feather from '@react-native-vector-icons/feather';
 import { useAuth } from '../../contexts/auth';
-import Header from '../../components/Header';
+import { db, isStorageObjectNotFound, storage } from '../../services/firebase';
 import {
   Container,
+  ProfileHeader,
+  AvatarButton,
+  Avatar,
+  AvatarEdit,
   Name,
   Email,
-  Buttoon,
-  ButtonText,
-  UploadButton,
-  UploadText,
-  Avatar,
+  Options,
+  OptionButton,
+  OptionContent,
+  OptionLeft,
+  OptionIconContainer,
+  OptionText,
+  Chevron,
+  DangerText,
+  ModalOverlay,
   ModalContainer,
+  ModalHeader,
+  ModalTitle,
   ButtonBack,
   Input,
+  SaveButton,
+  SaveButtonText,
 } from './styles';
-
-import Feather from '@react-native-vector-icons/feather';
-import { db, isStorageObjectNotFound, storage } from '../../services/firebase';
 
 export default function Profile() {
   const { signOut, user, setUser, storageUser } = useAuth();
@@ -50,10 +58,13 @@ export default function Profile() {
 
     async function loadAvatar() {
       try {
-        if (isActive && user) {
-          const response = await getStorageDownloadURL(
-            storageRef(storage, `users/${user.uid}`),
-          );
+        if (!user) return;
+
+        const response = await getStorageDownloadURL(
+          storageRef(storage, `users/${user.uid}`),
+        );
+
+        if (isActive) {
           setUrl(response);
         }
       } catch (err) {
@@ -62,94 +73,101 @@ export default function Profile() {
         }
       }
     }
+
     loadAvatar();
+
     return () => {
       isActive = false;
     };
   }, [user]);
 
-  async function handleSignOut() {
-    await signOut();
-  }
-
   async function updateProfile() {
-    if (nome === '' || !user) {
+    const newName = nome.trim();
+
+    if (newName === '' || !user) {
       return;
     }
 
-    await updateDoc(doc(db, 'users', user.uid), {
-      nome,
-    });
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        nome: newName,
+      });
 
-    //Buscar todos os posts desse user e atualizar o nome dele
-    const postsDocs = await getDocs(
-      query(collection(db, 'posts'), where('userId', '==', user.uid)),
-    );
+      const postsDocs = await getDocs(
+        query(collection(db, 'posts'), where('userId', '==', user.uid)),
+      );
 
-    //Percorrer todos posts desse user e atualizar
-    await Promise.all(
-      postsDocs.docs.map(postSnapshot =>
-        updateDoc(doc(db, 'posts', postSnapshot.id), { autor: nome }),
-      ),
-    );
+      await Promise.all(
+        postsDocs.docs.map(postSnapshot =>
+          updateDoc(doc(db, 'posts', postSnapshot.id), {
+            autor: newName,
+          }),
+        ),
+      );
 
-    const data = {
-      uid: user.uid,
-      nome: nome,
-      email: user.email,
-    };
-    setUser(data);
-    storageUser(data);
+      const data = {
+        uid: user.uid,
+        nome: newName,
+        email: user.email,
+      };
 
-    setOpen(false);
+      setUser(data);
+      await storageUser(data);
+
+      setOpen(false);
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+
+      Alert.alert('Erro', 'Não foi possível atualizar o perfil.');
+    }
   }
 
   function uploadFile() {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
     };
+
     launchImageLibrary(options, response => {
       if (response.didCancel) {
-        console.log('Cancelou!');
-      } else if (response.errorCode) {
-        Alert.alert('Ops parece que deu algum erro');
-      } else {
-        const imageUri = response.assets?.[0]?.uri;
-        if (!imageUri) {
-          Alert.alert('Ops parece que deu algum erro');
-          return;
-        }
-
-        uploadFileFirebase(imageUri)
-          .then(uploadAvatarPosts)
-          .catch(error => {
-            console.error('Unable to upload profile image', error);
-            Alert.alert('Ops parece que deu algum erro');
-          });
-
-        console.log('URI DA FOTO', imageUri);
-        setUrl(imageUri);
+        return;
       }
+
+      if (response.errorCode) {
+        Alert.alert('Erro', 'Não foi possível selecionar a imagem.');
+        return;
+      }
+
+      const imageUri = response.assets?.[0]?.uri;
+
+      if (!imageUri) {
+        Alert.alert('Erro', 'Não foi possível selecionar a imagem.');
+        return;
+      }
+
+      setUrl(imageUri);
+
+      uploadFileFirebase(imageUri)
+        .then(uploadAvatarPosts)
+        .catch(error => {
+          console.error('Unable to upload profile image', error);
+
+          Alert.alert('Erro', 'Não foi possível atualizar sua foto.');
+        });
     });
   }
 
   async function uploadFileFirebase(fileSource: string) {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     await putFile(storageRef(storage, `users/${user.uid}`), fileSource);
   }
 
   async function uploadAvatarPosts() {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     const image = await getStorageDownloadURL(
       storageRef(storage, `users/${user.uid}`),
     );
-    console.log('url recebida', image);
 
     const postDocs = await getDocs(
       query(collection(db, 'posts'), where('userId', '==', user.uid)),
@@ -166,49 +184,90 @@ export default function Profile() {
 
   return (
     <Container>
-      <Header />
+      <ProfileHeader>
+        <AvatarButton onPress={uploadFile} activeOpacity={0.85}>
+          {url ? (
+            <Avatar source={{ uri: url }} />
+          ) : (
+            <Avatar source={require('../../assets/avatar.png')} />
+          )}
 
-      {url ? (
-        <UploadButton onPress={uploadFile}>
-          <UploadText>+</UploadText>
-          <Avatar source={{ uri: url }} />
-        </UploadButton>
-      ) : (
-        <UploadButton onPress={uploadFile}>
-          <UploadText>+</UploadText>
-        </UploadButton>
-      )}
+          <AvatarEdit>
+            <Feather name="camera" size={17} color="#fff" />
+          </AvatarEdit>
+        </AvatarButton>
 
-      <Name>{user?.nome}</Name>
-      <Email>{user?.email}</Email>
+        <Name>{user?.nome}</Name>
+        <Email>{user?.email}</Email>
+      </ProfileHeader>
 
-      <Buttoon $bg="#428cfd" onPress={() => setOpen(true)}>
-        <ButtonText $color="#fff">Atualizar Perfil</ButtonText>
-      </Buttoon>
-
-      <Buttoon $bg="#ddd" onPress={handleSignOut}>
-        <ButtonText $color="#353840">Sair</ButtonText>
-      </Buttoon>
-
-      <Modal visible={open} animationType="slide" transparent={true}>
-        <ModalContainer
-          behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      <Options>
+        <OptionButton
+          activeOpacity={0.7}
+          onPress={() => {
+            setNome(user?.nome ?? '');
+            setOpen(true);
+          }}
         >
-          <ButtonBack onPress={() => setOpen(false)}>
-            <Feather name="arrow-left" size={22} color="#121212" />
-            <ButtonText $color="#121212">Voltar</ButtonText>
-          </ButtonBack>
+          <OptionContent>
+            <OptionLeft>
+              <OptionIconContainer>
+                <Feather name="user" size={20} color="#2563EB" />
+              </OptionIconContainer>
 
-          <Input
-            placeholder={user?.nome}
-            value={nome}
-            onChangeText={text => setNome(text)}
-          />
+              <OptionText>Atualizar perfil</OptionText>
+            </OptionLeft>
 
-          <Buttoon $bg="#428cfd" onPress={updateProfile}>
-            <ButtonText $color="#fff">Salvar</ButtonText>
-          </Buttoon>
-        </ModalContainer>
+            <Chevron name="chevron-right" size={21} color="#94A3B8" />
+          </OptionContent>
+        </OptionButton>
+
+        <OptionButton activeOpacity={0.7} onPress={signOut}>
+          <OptionContent>
+            <OptionLeft>
+              <OptionIconContainer>
+                <Feather name="log-out" size={20} color="#DC2626" />
+              </OptionIconContainer>
+
+              <DangerText>Sair da conta</DangerText>
+            </OptionLeft>
+
+            <Chevron name="chevron-right" size={21} color="#94A3B8" />
+          </OptionContent>
+        </OptionButton>
+      </Options>
+
+      <Modal
+        visible={open}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setOpen(false)}
+      >
+        <ModalOverlay>
+          <ModalContainer
+            behavior={Platform.OS === 'android' ? undefined : 'padding'}
+          >
+            <ModalHeader>
+              <ButtonBack onPress={() => setOpen(false)}>
+                <Feather name="arrow-left" size={22} color="#111827" />
+              </ButtonBack>
+
+              <ModalTitle>Atualizar perfil</ModalTitle>
+            </ModalHeader>
+
+            <Input
+              placeholder="Seu nome"
+              placeholderTextColor="#94A3B8"
+              value={nome}
+              onChangeText={setNome}
+              autoCapitalize="words"
+            />
+
+            <SaveButton onPress={updateProfile}>
+              <SaveButtonText>Salvar alterações</SaveButtonText>
+            </SaveButton>
+          </ModalContainer>
+        </ModalOverlay>
       </Modal>
     </Container>
   );

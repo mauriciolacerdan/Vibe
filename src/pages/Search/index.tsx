@@ -41,7 +41,7 @@ export default function Search() {
   return (
     <Container>
       <AreaInput>
-        <Feather name="search" size={20} color="#E52246" />
+        <Feather name="search" size={20} color="#111827" />
         <Input
           placeholder="Procurando alguem?"
           value={input}

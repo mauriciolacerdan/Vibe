@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { Container, ButtonPost, ListPosts } from './styles';
+import { Container, ButtonPost, ListPosts, ButtonSearch } from './styles';
 import Feather from '@react-native-vector-icons/feather';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -129,7 +129,7 @@ export default function Home() {
       <Header />
       {loading ? (
         <View style={styles.loading}>
-          <ActivityIndicator size={50} color="#e52246" />
+          <ActivityIndicator size={50} color="#111827" />
         </View>
       ) : (
         <ListPosts
@@ -145,11 +145,18 @@ export default function Home() {
         />
       )}
 
+      <ButtonSearch
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('Search')}
+      >
+        <Feather name="search" color="#fff" size={20} />
+      </ButtonSearch>
+
       <ButtonPost
         activeOpacity={0.8}
         onPress={() => navigation.navigate('NewPost')}
       >
-        <Feather name="edit-2" color="#fff" size={25} />
+        <Feather name="edit-2" color="#fff" size={20} />
       </ButtonPost>
     </Container>
   );

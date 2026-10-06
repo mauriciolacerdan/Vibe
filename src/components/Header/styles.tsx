@@ -1,19 +1,20 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
+//import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
-export const Container = styled(SafeAreaView)`
+export const ContainerVibe = styled.View`
   width: 100%;
-  background-color: #353840;
+  height: 65px;
+  background-color: #111827;
   align-items: center;
   justify-content: center;
-  padding-top: 15px;
+  padding-top: 5px;
   border-bottom-width: 1px;
-  border-bottom-color: #c7c7c7;
+  border-bottom-color: #e2e8f0;
 `;
 
-export const Title = styled.Text`
-  font-size: 27px;
-  font-weight: bold;
-  padding-bottom: 15px;
-  color: #fff;
+export const TitleVibe = styled.Text`
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.4px;
 `;

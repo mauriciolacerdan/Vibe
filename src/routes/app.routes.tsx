@@ -8,7 +8,7 @@ import Profile from '../pages/Profile/index';
 import Search from '../pages/Search/index';
 import NewPost from '../pages/NewPost/index';
 import PostsUser from '../pages/PostsUser/index';
-import ChatRoom from '../pages/ChatRoom(HeyGrupos)';
+import ChatRoom from '../pages/ChatRoom';
 import type { AppStackParamList, AppTabParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
@@ -24,12 +24,22 @@ function StackRoutes() {
       />
 
       <Stack.Screen
+        name="Search"
+        component={Search}
+        options={{
+          title: 'Pesquise',
+          headerTintColor: '#ffffff',
+          headerStyle: { backgroundColor: '#111827' },
+        }}
+      />
+
+      <Stack.Screen
         name="NewPost"
         component={NewPost}
         options={{
-          title: 'Novo Post',
-          headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#36393f' },
+          title: 'Novo post',
+          headerTintColor: '#ffffff',
+          headerStyle: { backgroundColor: '#111827' },
         }}
       />
 
@@ -37,8 +47,8 @@ function StackRoutes() {
         name="PostsUser"
         component={PostsUser}
         options={{
-          headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#36393f' },
+          headerTintColor: '#ffffff',
+          headerStyle: { backgroundColor: '#111827' },
         }}
       />
     </Stack.Navigator>
@@ -52,10 +62,12 @@ export default function AppRoutes() {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: '#fff',
+        tabBarActiveTintColor: '#2563eb',
+        tabBarInactiveTintColor: '#94a3b8',
         tabBarStyle: {
-          backgroundColor: '#202225',
-          borderTopWidth: 0,
+          backgroundColor: '#111827',
+          borderTopWidth: 1,
+          borderTopColor: '#1f2937',
         },
       }}
       initialRouteName="HomeTab"
@@ -69,7 +81,7 @@ export default function AppRoutes() {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Search"
         component={Search}
         options={{
@@ -77,7 +89,7 @@ export default function AppRoutes() {
             return <Feather name="search" color={color} size={size} />;
           },
         }}
-      />
+      />*/}
       <Tab.Screen
         name="ChatRoom"
         component={ChatRoom}
